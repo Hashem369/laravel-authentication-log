@@ -32,9 +32,13 @@ class DeviceFingerprint
             return '';
         }
 
-        // Remove version numbers (e.g., "Chrome/120.0.0.0" becomes "Chrome")
+        // Remove version numbers after colons (e.g., "rv:154.0" becomes "rv:")
+        // This is important for Firefox which uses "rv:version" format
+        $normalized = preg_replace('/:(\d+\.\d+\.\d+\.\d+|\d+\.\d+\.\d+|\d+\.\d+|\d+)/', ':', $userAgent);
+
+        // Remove version numbers after slashes (e.g., "Chrome/120.0.0.0" becomes "Chrome")
         // Pattern matches: /version, Version/version, v.version, etc.
-        $normalized = preg_replace('/\/(\d+\.\d+\.\d+\.\d+|\d+\.\d+\.\d+|\d+\.\d+|\d+)/', '', $userAgent);
+        $normalized = preg_replace('/\/(\d+\.\d+\.\d+\.\d+|\d+\.\d+\.\d+|\d+\.\d+|\d+)/', '', $normalized);
 
         // Remove "Version X.X" patterns (common in Safari)
         $normalized = preg_replace('/Version\/[\d.]+/i', '', $normalized);
